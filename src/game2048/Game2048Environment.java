@@ -25,7 +25,7 @@ public class Game2048Environment extends Environment {
         grid.setCellWidth(100);
         grid.setColumns(4);
         grid.setRows(4);
-        grid.setPosition(new Point(100,100));
+        grid.setPosition(new Point(25, 25));
         grid.setColor(Color.pink);
         
         this.setBackground(Color.BLACK);
