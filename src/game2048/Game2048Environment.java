@@ -17,16 +17,28 @@ import java.awt.event.MouseEvent;
  */
 public class Game2048Environment extends Environment {
     private MathGrid grid;
+    private DataTable dataTable;
     
     @Override
     public void initializeEnvironment() {
-        this.grid = new MathGrid();
+        int rows = 4;
+        int columns = 4;
+        
+        dataTable = new DataTable(rows, columns);
+        
+        dataTable.setData(0, 0, 2);
+        dataTable.setData(3, 0, 2048);
+        dataTable.setData(2, 2, 64);
+        
+        grid = new MathGrid();
         grid.setCellHeight(100);
         grid.setCellWidth(100);
-        grid.setColumns(4);
-        grid.setRows(4);
+        grid.setRows(rows);
+        grid.setColumns(columns);
         grid.setPosition(new Point(25, 25));
         grid.setColor(Color.pink);
+        grid.setDataTable(dataTable);
+        
         
         this.setBackground(Color.BLACK);
     }
