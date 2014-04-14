@@ -20,6 +20,6 @@ public class Game2048 {
         start();
     }
     private static void start(){
-        ApplicationStarter.run(new String[0], "2048", new Dimension(500,500), new Game2048Environment());
+        ApplicationStarter.run(new String[0], "2048", new Dimension(475,500), new Game2048Environment());
     }
 }
