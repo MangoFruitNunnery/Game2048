@@ -5,7 +5,6 @@
 package game2048;
 
 import grid.Grid;
-import static grid.Grid.paint;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -28,11 +27,11 @@ public class MathGrid extends Grid {
                 for (int column = 0; column < dataTable.getColumns(); column++) {
                     if (dataTable.getData(row, column) != 0) {
                         //draw block
-                        graphics.setColor(Color.WHITE);
+                        graphics.setColor(Color.GRAY);
                         graphics.fillRect(this.getCellSystemCoordinate(column, row).x + 2, this.getCellSystemCoordinate(column, row).y + 2, this.getCellWidth() - 4, this.getCellHeight() - 4);
                         
                         //draw value
-                        graphics.setColor(Color.GRAY);
+                        graphics.setColor(Color.BLACK);
                         graphics.setFont(new Font("Tahoma",Font.BOLD, 32));
                         graphics.drawString(String.valueOf(dataTable.getData(row, column)), this.getCellSystemCoordinate(column, row).x + (this.getCellWidth() / 4) , this.getCellSystemCoordinate(column, row).y + (this.getCellHeight() * 2 / 3));
                         
