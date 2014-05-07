@@ -42,7 +42,6 @@ public class Game2048Environment extends Environment {
         grid.setColor(Color.PINK);
         grid.setDataTable(dataTable);
 
-
         this.setBackground(Color.WHITE);
     }
 
@@ -52,6 +51,11 @@ public class Game2048Environment extends Environment {
 
     @Override
     public void keyPressedHandler(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+            addToScore(30);
+        }else if (e.getKeyCode() == KeyEvent.VK_F) {
+            grid.fillRandomEmptyCell(2);
+        }
     }
 
     @Override
@@ -68,9 +72,34 @@ public class Game2048Environment extends Environment {
         graphics.setFont(new Font("ComicSansMS", Font.CENTER_BASELINE, 100));
         graphics.drawString("2048", 150, 150);
         
+        graphics.setColor(Color.PINK);
+        graphics.setFont(new Font("ComicSansMS", Font.CENTER_BASELINE, 50));
+        graphics.drawString("Score: " + this.score, 100, 50);
+        
         this.grid.paintComponent(graphics);
     }
 
     private void checkGame2048Intersection() {
+    }
+
+    /**
+     * @return the score
+     */
+    public int getScore() {
+        return score;
+    }
+
+    /**
+     * @param score the score to set
+     */
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    /**
+     * @param score the score to add to current score
+     */
+    public void addToScore(int score) {
+        this.score += score;
     }
 }
