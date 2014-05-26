@@ -59,7 +59,6 @@ public class MathGrid extends Grid {
             //pick a random cell location, and set its value
             int random = (int) (emptyCells.size() * Math.random());
             dataTable.getData()[emptyCells.get(random).x][emptyCells.get(random).y] = value;
-
             return true;
         } else {
             return false;

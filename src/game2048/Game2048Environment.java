@@ -44,7 +44,7 @@ public class Game2048Environment extends Environment {
 
         this.setBackground(Color.WHITE);
     }
-
+    
     @Override
     public void timerTaskHandler() {
     }
@@ -53,8 +53,30 @@ public class Game2048Environment extends Environment {
     public void keyPressedHandler(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
             addToScore(30);
-        }else if (e.getKeyCode() == KeyEvent.VK_F) {
-            grid.fillRandomEmptyCell(2);
+        } else if (e.getKeyCode() == KeyEvent.VK_UP) {
+            if (Math.random() >= 0.75) {
+                grid.fillRandomEmptyCell(4);
+            } else {
+                grid.fillRandomEmptyCell(2);
+            }
+        } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+            if (Math.random() >= 0.75) {
+                grid.fillRandomEmptyCell(4);
+            } else {
+                grid.fillRandomEmptyCell(2);
+            }
+        } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+            if (Math.random() >= 0.75) {
+                grid.fillRandomEmptyCell(4);
+            } else {
+                grid.fillRandomEmptyCell(2);
+            }
+        } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+            if (Math.random() >= 0.75) {
+                grid.fillRandomEmptyCell(4);
+            } else {
+                grid.fillRandomEmptyCell(2);
+            }
         }
     }
 
@@ -71,11 +93,11 @@ public class Game2048Environment extends Environment {
         graphics.setColor(Color.PINK);
         graphics.setFont(new Font("ComicSansMS", Font.CENTER_BASELINE, 100));
         graphics.drawString("2048", 150, 150);
-        
+
         graphics.setColor(Color.PINK);
         graphics.setFont(new Font("ComicSansMS", Font.CENTER_BASELINE, 50));
         graphics.drawString("Score: " + this.score, 100, 50);
-        
+
         this.grid.paintComponent(graphics);
     }
 
