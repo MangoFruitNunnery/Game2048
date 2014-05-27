@@ -4,6 +4,7 @@
  */
 package game2048;
 
+import environment.Direction;
 import environment.Environment;
 import java.awt.Color;
 import java.awt.Font;
@@ -30,8 +31,8 @@ public class Game2048Environment extends Environment {
         int columns = 4;
 
         dataTable = new DataTable(rows, columns);
-        dataTable.setData(0, 0, 2);
-        dataTable.setData(3, 0, 2);
+        dataTable.setData(0, 2, 2);
+        dataTable.setData(3, 3, 2);
 
         grid = new MathGrid();
         grid.setCellHeight(100);
@@ -44,7 +45,7 @@ public class Game2048Environment extends Environment {
 
         this.setBackground(Color.WHITE);
     }
-    
+
     @Override
     public void timerTaskHandler() {
     }
@@ -54,30 +55,67 @@ public class Game2048Environment extends Environment {
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
             addToScore(30);
         } else if (e.getKeyCode() == KeyEvent.VK_UP) {
-            if (Math.random() >= 0.75) {
-                grid.fillRandomEmptyCell(4);
-            } else {
-                grid.fillRandomEmptyCell(2);
-            }
         } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-            if (Math.random() >= 0.75) {
-                grid.fillRandomEmptyCell(4);
-            } else {
-                grid.fillRandomEmptyCell(2);
-            }
         } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-            if (Math.random() >= 0.75) {
-                grid.fillRandomEmptyCell(4);
+            if (shiftCells(Direction.LEFT)) {
+                fillRandomEmptyCell();
             } else {
-                grid.fillRandomEmptyCell(2);
+                //beep
+                java.awt.Toolkit.getDefaultToolkit().beep();
             }
         } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            if (Math.random() >= 0.75) {
-                grid.fillRandomEmptyCell(4);
-            } else {
-                grid.fillRandomEmptyCell(2);
+            fillRandomEmptyCell();
+        }
+    }
+
+    private boolean shiftCells(Direction direction) {
+        boolean shiftSuccess = false;
+
+
+        if (direction == Direction.LEFT) {
+            for (int col = 1; col < this.dataTable.getColumns(); col++) {
+                for (int row = 0; row < this.dataTable.getRows(); row++) {
+                    //check if there a non-zero value that could be shifted!
+                    if (dataTable.getData(row, col) != 0) {
+                        //look for the first (leftmost) empty space that I can move to
+                        for (int targetColumn = 0; targetColumn < col; targetColumn++) {
+                            if (dataTable.getData(row, targetColumn) == 0) {
+                                // found empty space -> move the data value,and empty the old space
+                                dataTable.getData()[row][targetColumn] = dataTable.getData()[row][col];
+                                dataTable.getData()[row][col] = 0;
+
+                                shiftSuccess = true;
+                            }
+
+                            // check for merge: can the new space be merge with a cell immediately left of it?
+                            if (targetColumn >= 1) {
+                                if (dataTable.getData()[row][targetColumn] == dataTable.getData()[row][targetColumn - 1]) {
+                                    //merge the two values, then empty the last space
+                                    dataTable.getData()[row][targetColumn - 1] *= 2;
+                                    //increment the score
+                                    this.addToScore(dataTable.getData()[row][targetColumn - 1]);
+                                    //empty the old value
+                                    dataTable.getData()[row][targetColumn] = 0;
+                                }
+                            }
+
+                        }
+                    }
+                }
+
             }
         }
+
+        return shiftSuccess;
+    }
+
+    private void fillRandomEmptyCell() {
+        if (Math.random() >= 0.75) {
+            grid.fillRandomEmptyCell(4);
+        } else {
+            grid.fillRandomEmptyCell(2);
+        }
+
     }
 
     @Override
