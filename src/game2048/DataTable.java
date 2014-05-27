@@ -6,6 +6,8 @@
 
 package game2048;
 
+import java.awt.Color;
+
 /**
  *
  * @author kevin.lawrence
@@ -59,5 +61,9 @@ public class DataTable {
      */
     public void setData(int[][] data) {
         this.data = data;
+    }
+
+    void setColor(Color BLACK) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
