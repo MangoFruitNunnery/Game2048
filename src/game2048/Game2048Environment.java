@@ -60,33 +60,42 @@ public class Game2048Environment extends Environment {
             if (shiftCells(Direction.LEFT)) {
                 fillRandomEmptyCell();
             } else {
-                //beep
+                //put funny awkward sound in
                 java.awt.Toolkit.getDefaultToolkit().beep();
             }
         } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            fillRandomEmptyCell();
+            if (shiftCells(Direction.RIGHT)) {
+                fillRandomEmptyCell();
+            } else {
+                //put funny awkward sound in
+                java.awt.Toolkit.getDefaultToolkit().beep();
+            }
+//            fillRandomEmptyCell();
         }
     }
+    
+    private int EMPTY = 0;
 
     private boolean shiftCells(Direction direction) {
         boolean shiftSuccess = false;
 
 
+        //<editor-fold defaultstate="collapsed" desc="Shift LEFT">
         if (direction == Direction.LEFT) {
             for (int col = 1; col < this.dataTable.getColumns(); col++) {
                 for (int row = 0; row < this.dataTable.getRows(); row++) {
                     //check if there a non-zero value that could be shifted!
-                    if (dataTable.getData(row, col) != 0) {
+                    if (dataTable.getData(row, col) != EMPTY) {
                         //look for the first (leftmost) empty space that I can move to
                         for (int targetColumn = 0; targetColumn < col; targetColumn++) {
-                            if (dataTable.getData(row, targetColumn) == 0) {
+                            if (dataTable.getData(row, targetColumn) == EMPTY) {
                                 // found empty space -> move the data value,and empty the old space
                                 dataTable.getData()[row][targetColumn] = dataTable.getData()[row][col];
-                                dataTable.getData()[row][col] = 0;
-
+                                dataTable.getData()[row][col] = EMPTY;
+                                 
                                 shiftSuccess = true;
                             }
-
+                            
                             // check for merge: can the new space be merge with a cell immediately left of it?
                             if (targetColumn >= 1) {
                                 if (dataTable.getData()[row][targetColumn] == dataTable.getData()[row][targetColumn - 1]) {
@@ -95,16 +104,46 @@ public class Game2048Environment extends Environment {
                                     //increment the score
                                     this.addToScore(dataTable.getData()[row][targetColumn - 1]);
                                     //empty the old value
-                                    dataTable.getData()[row][targetColumn] = 0;
+                                    dataTable.getData()[row][targetColumn] = EMPTY;
                                 }
-                            }
-
+                            }   
                         }
                     }
-                }
-
+                }   
             }
         }
+        
+        if (direction == Direction.RIGHT) {
+            for (int col = this.dataTable.getColumns() - 2; col >= 0 ; col--) {
+                for (int row = 0; row < this.dataTable.getRows(); row++) {
+                    //check if there a non-zero value that could be shifted!
+                    if (dataTable.getData(row, col) != EMPTY) {
+                        //look for the first (rightmost) empty space that I can move to
+                        for (int targetColumn = this.dataTable.getColumns() - 1; targetColumn > col; targetColumn--) {
+                            if (dataTable.getData(row, targetColumn) == EMPTY) {
+                                // found empty space -> move the data value,and empty the old space
+                                dataTable.getData()[row][targetColumn] = dataTable.getData()[row][col];
+                                dataTable.getData()[row][col] = EMPTY;
+
+                                shiftSuccess = true;
+                            }
+                            // check for merge: can the new space be merge with a cell immediately left of it?
+                            if (targetColumn <= this.dataTable.getColumns() - 2) {
+                                if (dataTable.getData()[row][targetColumn] == dataTable.getData()[row][targetColumn + 1]) {
+                                    //merge the two values, then empty the last space
+                                    dataTable.getData()[row][targetColumn + 1] *= 2;
+                                    //increment the score
+                                    this.addToScore(dataTable.getData()[row][targetColumn + 1]);
+                                    //empty the old value
+                                    dataTable.getData()[row][targetColumn] = EMPTY;
+                                }
+                            }   
+                        }
+                    }
+                }   
+            }
+        }
+        //</editor-fold>
 
         return shiftSuccess;
     }
@@ -161,5 +200,6 @@ public class Game2048Environment extends Environment {
      */
     public void addToScore(int score) {
         this.score += score;
+        //play a fun sound!
     }
 }
