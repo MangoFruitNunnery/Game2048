@@ -68,6 +68,8 @@ public class Game2048Environment extends Environment {
         }
     }
 
+    private int EMPTY_CELL = 0;
+    
     private boolean shiftCells(Direction direction) {
         boolean shiftSuccess = false;
 
@@ -96,6 +98,76 @@ public class Game2048Environment extends Environment {
                                     this.addToScore(dataTable.getData()[row][targetColumn - 1]);
                                     //empty the old value
                                     dataTable.getData()[row][targetColumn] = 0;
+                                }
+                            }
+
+                        }
+                    }
+                }
+
+            }
+        }
+        
+        if (direction == Direction.UP) {
+            System.out.println("UP");
+            for (int col = 0; col < this.dataTable.getColumns(); col++) {
+                for (int row = 1; row < this.dataTable.getRows(); row++) {
+                    //check if there a non-zero value that could be shifted!
+                    if (dataTable.getData(row, col) != EMPTY_CELL) {
+                        //look for the first (leftmost) empty space that I can move to
+                        for (int targetRow = 0; targetRow < row - 1; targetRow++) {
+                            if (dataTable.getData(targetRow, col) == EMPTY_CELL) {
+                                // found empty space -> move the data value,and empty the old space
+                                dataTable.getData()[targetRow][col] = dataTable.getData()[row][col];
+                                dataTable.getData()[row][col] = EMPTY_CELL;
+
+                                shiftSuccess = true;
+                            }
+
+                            // check for merge: can the new space be merge with a cell immediately left of it?
+                            if (targetRow >= 1) {
+                                if (dataTable.getData()[targetRow][col] == dataTable.getData()[targetRow - 1][col]) {
+                                    //merge the two values, then empty the last space
+                                    dataTable.getData()[targetRow - 1][col] *= 2;
+                                    //increment the score
+                                    this.addToScore(dataTable.getData()[targetRow - 1][col]);
+                                    //empty the old value
+                                    dataTable.getData()[targetRow][col] = 0;
+                                }
+                            }
+
+                        }
+                    }
+                }
+
+            }
+        }
+
+        if (direction == Direction.DOWN) {
+            System.out.println("UP");
+            for (int col = 0; col < this.dataTable.getColumns(); col++) {
+                for (int row = 1; row < this.dataTable.getRows(); row++) {
+                    //check if there a non-zero value that could be shifted!
+                    if (dataTable.getData(row, col) != EMPTY_CELL) {
+                        //look for the first (leftmost) empty space that I can move to
+                        for (int targetRow = 0; targetRow < row - 1; targetRow++) {
+                            if (dataTable.getData(targetRow, col) == EMPTY_CELL) {
+                                // found empty space -> move the data value,and empty the old space
+                                dataTable.getData()[targetRow][col] = dataTable.getData()[row][col];
+                                dataTable.getData()[row][col] = EMPTY_CELL;
+
+                                shiftSuccess = true;
+                            }
+
+                            // check for merge: can the new space be merge with a cell immediately left of it?
+                            if (targetRow >= 1) {
+                                if (dataTable.getData()[targetRow][col] == dataTable.getData()[targetRow - 1][col]) {
+                                    //merge the two values, then empty the last space
+                                    dataTable.getData()[targetRow - 1][col] *= 2;
+                                    //increment the score
+                                    this.addToScore(dataTable.getData()[targetRow - 1][col]);
+                                    //empty the old value
+                                    dataTable.getData()[targetRow][col] = 0;
                                 }
                             }
 
