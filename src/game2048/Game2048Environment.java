@@ -55,7 +55,19 @@ public class Game2048Environment extends Environment {
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
             addToScore(30);
         } else if (e.getKeyCode() == KeyEvent.VK_UP) {
+            if (shiftCells(Direction.UP)) {
+                fillRandomEmptyCell();
+            } else {
+                //put funny awkward sound in
+                java.awt.Toolkit.getDefaultToolkit().beep();
+            }
         } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+            if (shiftCells(Direction.DOWN)) {
+                fillRandomEmptyCell();
+            } else {
+                //put funny awkward sound in
+                java.awt.Toolkit.getDefaultToolkit().beep();
+            }
         } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
             if (shiftCells(Direction.LEFT)) {
                 fillRandomEmptyCell();
@@ -78,7 +90,6 @@ public class Game2048Environment extends Environment {
 
     private boolean shiftCells(Direction direction) {
         boolean shiftSuccess = false;
-
 
         //<editor-fold defaultstate="collapsed" desc="Shift LEFT">
         if (direction == Direction.LEFT) {
@@ -112,7 +123,9 @@ public class Game2048Environment extends Environment {
                 }   
             }
         }
+        //</editor-fold>
         
+        //<editor-fold defaultstate="collapsed" desc="Shift RIGHT">
         if (direction == Direction.RIGHT) {
             for (int col = this.dataTable.getColumns() - 2; col >= 0 ; col--) {
                 for (int row = 0; row < this.dataTable.getRows(); row++) {
@@ -145,6 +158,46 @@ public class Game2048Environment extends Environment {
         }
         //</editor-fold>
 
+        //<editor-fold defaultstate="collapsed" desc="Shift UP">
+        
+        //to be completed by the one, the only: tu le
+        if (direction == Direction.UP) {
+            System.out.println("UP");
+            for (int col = 0; col < this.dataTable.getColumns(); col++) {
+                for (int row = 1; row < this.dataTable.getRows(); row++) {
+                    //check if there a non-zero value that could be shifted!
+                    if (dataTable.getData(row, col) != EMPTY) {
+                        //look for the first (leftmost) empty space that I can move to
+                        for (int targetRow = 0; targetRow < row; targetRow++) {
+                            if (dataTable.getData(targetRow, col) == EMPTY) {
+                                // found empty space -> move the data value,and empty the old space
+                                dataTable.getData()[targetRow][col] = dataTable.getData()[row][col];
+                                dataTable.getData()[row][col] = EMPTY;
+                                
+                                shiftSuccess = true;
+                            }
+                            
+                            // check for merge: can the new space be merge with a cell immediately left of it?
+                            if (targetRow >= 1) {
+                                if (dataTable.getData()[targetRow][col] == dataTable.getData()[targetRow - 1][col]) {
+                                    //merge the two values, then empty the last space
+                                    dataTable.getData()[targetRow - 1][col] *= 2;
+                                    //increment the score
+                                    this.addToScore(dataTable.getData()[targetRow - 1][col]);
+                                    //empty the old value
+                                    dataTable.getData()[targetRow][col] = 0;
+                                }
+                            }
+                            
+                        }
+                    }
+                }
+                
+            }
+        }
+        //</editor-fold>
+        
+        
         return shiftSuccess;
     }
 
