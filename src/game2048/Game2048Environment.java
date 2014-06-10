@@ -4,6 +4,7 @@
  */
 package game2048;
 
+import audio.AudioPlayer;
 import environment.Direction;
 import environment.Environment;
 import java.awt.Color;
@@ -24,6 +25,7 @@ public class Game2048Environment extends Environment {
     private int score = 0;
     private Number number;
     private int moveCounter;
+    private boolean isGameOver = false;
 
     @Override
     public void initializeEnvironment() {
@@ -84,8 +86,12 @@ public class Game2048Environment extends Environment {
             }
 //            fillRandomEmptyCell();
         }
+       
+        if (isGridFull()) {
+            this.isGameOver = true;
+            System.out.println("GAME OVER!!!!!!!!!!!!!");
+        }
     }
-    
     private int EMPTY = 0;
 
     private boolean shiftCells(Direction direction) {
@@ -103,10 +109,10 @@ public class Game2048Environment extends Environment {
                                 // found empty space -> move the data value,and empty the old space
                                 dataTable.getData()[row][targetColumn] = dataTable.getData()[row][col];
                                 dataTable.getData()[row][col] = EMPTY;
-                                 
+
                                 shiftSuccess = true;
                             }
-                            
+
                             // check for merge: can the new space be merge with a cell immediately left of it?
                             if (targetColumn >= 1) {
                                 if (dataTable.getData()[row][targetColumn] == dataTable.getData()[row][targetColumn - 1]) {
@@ -117,17 +123,17 @@ public class Game2048Environment extends Environment {
                                     //empty the old value
                                     dataTable.getData()[row][targetColumn] = EMPTY;
                                 }
-                            }   
+                            }
                         }
                     }
-                }   
+                }
             }
         }
         //</editor-fold>
-        
+
         //<editor-fold defaultstate="collapsed" desc="Shift RIGHT">
         if (direction == Direction.RIGHT) {
-            for (int col = this.dataTable.getColumns() - 2; col >= 0 ; col--) {
+            for (int col = this.dataTable.getColumns() - 2; col >= 0; col--) {
                 for (int row = 0; row < this.dataTable.getRows(); row++) {
                     //check if there a non-zero value that could be shifted!
                     if (dataTable.getData(row, col) != EMPTY) {
@@ -150,19 +156,18 @@ public class Game2048Environment extends Environment {
                                     //empty the old value
                                     dataTable.getData()[row][targetColumn] = EMPTY;
                                 }
-                            }   
+                            }
                         }
                     }
-                }   
+                }
             }
         }
         //</editor-fold>
 
         //<editor-fold defaultstate="collapsed" desc="Shift UP">
-        
+
         //to be completed by the one, the only: tu le
         if (direction == Direction.UP) {
-            System.out.println("UP");
             for (int col = 0; col < this.dataTable.getColumns(); col++) {
                 for (int row = 1; row < this.dataTable.getRows(); row++) {
                     //check if there a non-zero value that could be shifted!
@@ -173,10 +178,10 @@ public class Game2048Environment extends Environment {
                                 // found empty space -> move the data value,and empty the old space
                                 dataTable.getData()[targetRow][col] = dataTable.getData()[row][col];
                                 dataTable.getData()[row][col] = EMPTY;
-                                
+
                                 shiftSuccess = true;
                             }
-                            
+
                             // check for merge: can the new space be merge with a cell immediately left of it?
                             if (targetRow >= 1) {
                                 if (dataTable.getData()[targetRow][col] == dataTable.getData()[targetRow - 1][col]) {
@@ -184,6 +189,43 @@ public class Game2048Environment extends Environment {
                                     dataTable.getData()[targetRow - 1][col] *= 2;
                                     //increment the score
                                     this.addToScore(dataTable.getData()[targetRow - 1][col]);
+                                    //empty the old value
+                                    dataTable.getData()[targetRow][col] = 0;
+                                }
+                            }
+
+                        }
+                    }
+                }
+
+            }
+        }
+        //</editor-fold>
+
+        //<editor-fold defaultstate="collapsed" desc="Shift DOWN">
+        if (direction == Direction.DOWN) {
+            System.out.println("DOWN");
+            for (int col = 0; col < this.dataTable.getColumns(); col++) {
+                for (int row = this.dataTable.getRows() - 2; row >= 0; row--) {
+                    //check if there a non-zero value that could be shifted!
+                    if (dataTable.getData(row, col) != EMPTY) {
+                        //look for the first (leftmost) empty space that I can move to
+                        for (int targetRow = dataTable.getRows() - 1; targetRow > row; targetRow--) {
+                            if (dataTable.getData(targetRow, col) == EMPTY) {
+                                // found empty space -> move the data value,and empty the old space
+                                dataTable.getData()[targetRow][col] = dataTable.getData()[row][col];
+                                dataTable.getData()[row][col] = EMPTY;
+                                
+                                shiftSuccess = true;
+                            }
+                            
+                            // check for merge: can the new space be merge with a cell immediately left of it?
+                            if (targetRow < dataTable.getRows() - 1) {
+                                if (dataTable.getData()[targetRow][col] == dataTable.getData()[targetRow + 1][col]) {
+                                    //merge the two values, then empty the last space
+                                    dataTable.getData()[targetRow + 1][col] *= 2;
+                                    //increment the score
+                                    this.addToScore(dataTable.getData()[targetRow + 1][col]);
                                     //empty the old value
                                     dataTable.getData()[targetRow][col] = 0;
                                 }
@@ -196,8 +238,11 @@ public class Game2048Environment extends Environment {
             }
         }
         //</editor-fold>
-        
-        
+
+        if (shiftSuccess) {
+            AudioPlayer.play("/resources/Swoosh.wav");
+        }
+
         return shiftSuccess;
     }
 
@@ -207,7 +252,6 @@ public class Game2048Environment extends Environment {
         } else {
             grid.fillRandomEmptyCell(2);
         }
-
     }
 
     @Override
@@ -227,6 +271,10 @@ public class Game2048Environment extends Environment {
         graphics.setColor(Color.PINK);
         graphics.setFont(new Font("ComicSansMS", Font.CENTER_BASELINE, 50));
         graphics.drawString("Score: " + this.score, 100, 50);
+        
+        if (isGameOver) {
+            graphics.drawString("GAME OVER", 100, 100);   
+        }
 
         this.grid.paintComponent(graphics);
     }
@@ -254,5 +302,17 @@ public class Game2048Environment extends Environment {
     public void addToScore(int score) {
         this.score += score;
         //play a fun sound!
+    }
+
+    public boolean isGridFull() {
+        for (int col = 0; col < dataTable.getColumns(); col++) {
+            for (int row = 0; row < dataTable.getRows(); row++) {
+                if (dataTable.getData()[row][col] == EMPTY) {
+                    return false;
+                }
+            }
+        }
+        System.out.println("GAME OVER");
+        return true;
     }
 }
